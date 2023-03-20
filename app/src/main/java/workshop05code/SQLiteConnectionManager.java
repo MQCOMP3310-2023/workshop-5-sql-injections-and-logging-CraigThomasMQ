@@ -18,17 +18,17 @@ import java.util.logging.Logger;
 
 public class SQLiteConnectionManager {
     //Start code logging exercise
+    private static final Logger logger = Logger.getLogger(SQLiteConnectionManager.class.getName());
+	
     static {
         // must set before the Logger
         // loads logging.properties from the classpath
         try {// resources\logging.properties
             LogManager.getLogManager().readConfiguration(new FileInputStream("resources/logging.properties"));
         } catch (SecurityException | IOException e1) {
-            e1.printStackTrace();
-        }
+           // e1.printStackTrace();
+                }
     }
-
-    private static final Logger logger = Logger.getLogger(SQLiteConnectionManager.class.getName());
     //End code logging exercise
     
     private String databaseURL = "";
@@ -150,10 +150,17 @@ public class SQLiteConnectionManager {
 		
         String sql = "SELECT count(id) as total FROM validWords WHERE word like?;";
 
+		if(guess.length() != 4 || !guess.matches("[a-z]+")){
+            System.out.println("Not Acceptable Input. Word Must be only 4 Characters Long");
+            logger.log(Level.SEVERE, guess, "data.txt");
+            return false;
+        }
+
         try (Connection conn = DriverManager.getConnection(databaseURL);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-			
-            stmt.setString(1, guess);
+            	stmt.setString(1, guess);
+                logger.log(Level.FINE, sql);
+
             ResultSet resultRows = stmt.executeQuery();
             if (resultRows.next()) {
                 int result = resultRows.getInt("total");
