@@ -149,6 +149,8 @@ public class SQLiteConnectionManager {
 
         try (Connection conn = DriverManager.getConnection(databaseURL);
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, guess);
+                ResultSet results = stmt.executeQuery();
 
             ResultSet resultRows = stmt.executeQuery();
             if (resultRows.next()) {
